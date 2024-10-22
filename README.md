@@ -5,4 +5,9 @@ Run with `node --watch app.js`.
 
 Initial set up is from the Odin Project https://www.theodinproject.com/lessons/node-path-nodejs-authentication-basics 
 
+Current links: 
+
+http://localhost:3000/ is login page 
+
+http://localhost:3000/sign-up is sign up page 
 
