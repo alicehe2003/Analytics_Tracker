@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage</title>
+    <link rel="stylesheet" href="/index.css">
 </head>
 <body>
     <% if (user) { %>
         <h1>WELCOME BACK <%= user.username %></h1>
 
-        <a href="/settings">Settings</a>
-        <a href="/analytics">Analytics</a>
-        <a href="/log-out">LOG OUT</a>
+        <div class="sidebar">
+            <a href="/">Main page</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/settings">Settings</a>
+            <a href="/log-out">LOG OUT</a>
+        </div>
     <% } else { %>
         <h1>Please log in</h1>
         <form action="/log-in" method="POST">

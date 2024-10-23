@@ -20,5 +20,7 @@ http://localhost:3000/sign-up is sign up page
 - create databases to store analytics 
 - perform data analysis 
 - display analytical information 
-- web design and layout (CSS styling) 
+- implement features in settings: change username, delete account 
+
+- web design and layout (CSS styling): intro page, graph layouts 
 
