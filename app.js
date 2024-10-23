@@ -71,6 +71,8 @@ app.get("/log-out", (req, res, next) => {
     }); 
 }); 
 
+app.get("/settings", (req, res) => res.render("settings")); 
+
 app.post("/sign-up", async (req, res, next) => {
     try {
         // hash password before saving 
