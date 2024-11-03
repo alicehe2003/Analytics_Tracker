@@ -1,5 +1,6 @@
 const express = require("express");
 const passport = require("passport");
+const { fetchInstagramAnalytics, fetchYouTubeAnalytics } = require("../services/analyticsService");
 
 const router = express.Router();
 
@@ -66,5 +67,23 @@ router.post(
         failureRedirect: "/",
     })
 );
+
+// Route to fetch analytics from API calls and pass to analytics.ejs 
+router.get("/analytics", ensureAuthenticated, async (req, res, next) => {
+    try {
+        const instagramData = await fetchInstagramAnalytics(); 
+        const youtubeData = await fetchYouTubeAnalytics(); 
+
+        const combinedData = [
+            ...instagramData, 
+            ...youtubeData, 
+            // additional platforms or analysis if required 
+        ]; 
+
+        res.render("analytics", { user: req.user, analyticsData: combinedData }); 
+    } catch (err) {
+        next(err); 
+    }
+}); 
 
 module.exports = router;
