@@ -4,7 +4,7 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
-const indexRouter = require('./routes/index');  // Import the routes
+const indexRouter = require('./routes/index');  
 
 const pool = new Pool({
     // PostgreSQL config
