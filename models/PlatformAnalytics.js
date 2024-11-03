@@ -13,3 +13,27 @@ class PlatformAnalytics {
         this.isSponsored = isSponsored || false; 
     }
 }
+
+// Instagram analytics 
+class InstagramAnalytics extends PlatformAnalytics {
+    constructor(data) {
+        super(data); 
+    }
+}
+
+// YouTube analytics 
+class YouTubeAnalytics extends PlatformAnalytics {
+    constructor(data) {
+        super(data); 
+    }
+}
+
+// other analytics - for platforms without built-in support 
+class OtherAnalytics extends PlatformAnalytics {
+    constructor(data, customPlatformName) {
+        super(data); 
+        this.customPlatformName = customPlatformName; 
+    }
+}
+
+module.exports = { PlatformAnalytics, InstagramAnalytics, YouTubeAnalytics, OtherAnalytics };
