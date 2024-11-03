@@ -7,13 +7,26 @@
     <link rel="stylesheet" href="/analytics.css">
 </head>
 <body>
-    <h1>Analytics</h1>
+    <h1>Analytics for <%= user.username %></h1>
 
     <div class="sidebar">
         <a href="/">Main page</a>
         <a href="/analytics">Analytics</a>
         <a href="/settings">Settings</a>
         <a href="/log-out">LOG OUT</a>
+    </div>
+
+    <div class="analytics_display"> 
+        <h2>Analytics Display:</h2>
+        <% analyticsData.forEach(data => { %>
+            <div class="analytics-entry">
+                <p>Views: <%= data.views %></p>
+                <p>Likes: <%= data.likes %></p>
+                <p>Comments: <%= data.comments %></p>
+                <p>Shares: <%= data.shares %></p>
+                <p>Amount Made: <%= data.amountMade %></p>
+            </div>
+        <% }) %>
     </div>
 </body>
 </html>
