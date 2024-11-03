@@ -24,3 +24,17 @@ http://localhost:3000/sign-up is sign up page
 
 - web design and layout (CSS styling): intro page, graph layouts 
 
+# Resources 
+
+### Instagram API 
+
+https://developers.facebook.com/docs/instagram-platform/ 
+
+https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/insights/
+
+Requirements (relevant to this app): 
+- Must have a Facebook account connected to the Instagram account 
+- Must have creator or business account 
+
+Next step: https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/get-started 
+
