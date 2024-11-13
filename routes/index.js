@@ -63,23 +63,47 @@ router.post(
     })
 );
 
-// Route to fetch analytics from API calls and pass to analytics.ejs 
-router.get("/analytics", ensureAuthenticated, async (req, res, next) => {
-    try {
-        // Assuming req.user contains the access token from Google OAuth
-        const accessToken = req.user.accessToken;
-        
-        // List of YouTube video IDs to fetch analytics for
-        const youtubeVideoIds = ["video_id_here"];
-        
-        const youtubeData = await Promise.all(
-            youtubeVideoIds.map(videoId => fetchYouTubeAnalytics(accessToken, videoId))
-        );
+// Route to render analytics page with form (GET request)
+router.get("/analytics", ensureAuthenticated, (req, res) => {
+    res.render("analytics", { 
+        user: req.user, 
+        analyticsData: [],
+        error: null  // Initialize error as null
+    });
+});
 
-        res.render("analytics", { user: req.user, analyticsData: youtubeData });
+// Route to fetch analytics for the specified video ID (POST request)
+router.post("/analytics", ensureAuthenticated, async (req, res, next) => {
+    const { videoId } = req.body;
+    
+    try {
+        // Validate video ID
+        if (!videoId) {
+            throw new Error('Video ID is required');
+        }
+        
+        // Fetch YouTube analytics for the provided video ID
+        const accessToken = req.user.accessToken;
+        const youtubeData = await fetchYouTubeAnalytics(accessToken, videoId);
+        
+        if (!youtubeData) {
+            throw new Error('No data found for the provided video ID');
+        }
+        
+        // Render the page with analytics data
+        res.render("analytics", { 
+            user: req.user, 
+            analyticsData: [youtubeData],
+            error: null  // No error when successful
+        });
     } catch (err) {
-        next(err); 
+        // Render the page with error message
+        res.render("analytics", { 
+            user: req.user, 
+            analyticsData: [],
+            error: err.message || 'An error occurred while fetching analytics'
+        });
     }
-}); 
+});
 
 module.exports = router;

@@ -16,21 +16,38 @@
         <a href="/log-out">LOG OUT</a>
     </div>
 
-    <div class="analytics_display"> 
+    <div class="analytics_input">
+        <form action="/analytics" method="POST">
+            <label for="videoId">Enter YouTube Video ID:</label>
+            <input type="text" id="videoId" name="videoId" required>
+            <button type="submit">Get Analytics</button>
+        </form>
+    </div>
+
+    <div class="analytics_display">
         <h2>Analytics Display:</h2>
-        <% analyticsData.forEach(data => { %>
-            <% if (data && Object.keys(data).length > 0) { %>
-                <div class="analytics-entry">
-                    <p>Views: <%= data.views %></p>
-                    <p>Likes: <%= data.likes %></p>
-                    <p>Comments: <%= data.comments %></p>
-                </div>
-            <% } else { %>
-                <div class="analytics-entry">
-                    <p>No data available for this video.</p>
-                </div>
-            <% } %>
-        <% }) %>
+        
+        <!-- Error message section -->
+        <% if (error !== null) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <!-- Analytics data section -->
+        <% if (analyticsData && analyticsData.length > 0) { %>
+            <div class="stats">
+                <% analyticsData.forEach(data => { %>
+                    <div class="stat-item">
+                        <p>Views: <%= data.views %></p>
+                        <p>Likes: <%= data.likes %></p>
+                        <p>Comments: <%= data.comments %></p>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else if (!error) { %>
+            <p>No analytics data available. Please enter a video ID to view statistics.</p>
+        <% } %>
     </div>
 </body>
 </html>
