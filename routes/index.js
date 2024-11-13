@@ -35,11 +35,6 @@ router.get("/settings", ensureAuthenticated, (req, res) => {
     res.render("settings");
 });
 
-// Analytics route (only accessible if logged in)
-router.get("/analytics", ensureAuthenticated, (req, res) => {
-    res.render("analytics");
-});
-
 // Sign-up POST route
 router.post("/sign-up", async (req, res, next) => {
     try {
@@ -71,16 +66,17 @@ router.post(
 // Route to fetch analytics from API calls and pass to analytics.ejs 
 router.get("/analytics", ensureAuthenticated, async (req, res, next) => {
     try {
-        const instagramData = await fetchInstagramAnalytics(); 
-        const youtubeData = await fetchYouTubeAnalytics(); 
+        // Assuming req.user contains the access token from Google OAuth
+        const accessToken = req.user.accessToken;
+        
+        // List of YouTube video IDs to fetch analytics for
+        const youtubeVideoIds = ["video_id_here"];
+        
+        const youtubeData = await Promise.all(
+            youtubeVideoIds.map(videoId => fetchYouTubeAnalytics(accessToken, videoId))
+        );
 
-        const combinedData = [
-            ...instagramData, 
-            ...youtubeData, 
-            // additional platforms or analysis if required 
-        ]; 
-
-        res.render("analytics", { user: req.user, analyticsData: combinedData }); 
+        res.render("analytics", { user: req.user, analyticsData: youtubeData });
     } catch (err) {
         next(err); 
     }

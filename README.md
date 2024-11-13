@@ -38,6 +38,8 @@ Requirements (relevant to this app):
 
 Next step: https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/get-started 
 
+https://developers.facebook.com/async/registration/dialog/?src=default
+
 ### YouTube API 
 
 https://developers.google.com/youtube/reporting 

@@ -19,13 +19,17 @@
     <div class="analytics_display"> 
         <h2>Analytics Display:</h2>
         <% analyticsData.forEach(data => { %>
-            <div class="analytics-entry">
-                <p>Views: <%= data.views %></p>
-                <p>Likes: <%= data.likes %></p>
-                <p>Comments: <%= data.comments %></p>
-                <p>Shares: <%= data.shares %></p>
-                <p>Amount Made: <%= data.amountMade %></p>
-            </div>
+            <% if (data && Object.keys(data).length > 0) { %>
+                <div class="analytics-entry">
+                    <p>Views: <%= data.views %></p>
+                    <p>Likes: <%= data.likes %></p>
+                    <p>Comments: <%= data.comments %></p>
+                </div>
+            <% } else { %>
+                <div class="analytics-entry">
+                    <p>No data available for this video.</p>
+                </div>
+            <% } %>
         <% }) %>
     </div>
 </body>
