@@ -1,6 +1,4 @@
 require("dotenv").config();
-
-const { Pool } = require("pg");
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
@@ -8,10 +6,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy; 
 const bcrypt = require('bcryptjs');
 const indexRouter = require('./routes/index');  
-
-const pool = new Pool({
-    // PostgreSQL config
-});
+const pool = require("./db");  // Import from db.js
 
 // Passport setup
 passport.use(
@@ -44,11 +39,29 @@ passport.use(
             callbackURL: process.env.GOOGLE_CLIENT_CALLBACK,
         },
         async (accessToken, refreshToken, profile, done) => {
-            // Here, handle the Google user profile and store their info in your database
-            const user = { googleId: profile.id, accessToken };
-            // Ideally, look up the user in the database or create one if they don't exist
-            // This example assumes a user is returned for simplicity
-            return done(null, user);
+            try {
+                const { id: googleId } = profile;
+                const existingUser = await pool.query("SELECT * FROM users WHERE googleId = $1", [googleId]);
+
+                if (existingUser.rows.length > 0) {
+                    // If user exists, update the access token
+                    const user = existingUser.rows[0];
+                    await pool.query(
+                        "UPDATE users SET accessToken = $1 WHERE id = $2",
+                        [accessToken, user.id]
+                    );
+                    return done(null, user);
+                } else {
+                    // If user doesn't exist, create a new record
+                    const newUser = await pool.query(
+                        "INSERT INTO users (googleId, accessToken) VALUES ($1, $2) RETURNING *",
+                        [googleId, accessToken]
+                    );
+                    return done(null, newUser.rows[0]);
+                }
+            } catch (err) {
+                return done(err);
+            }
         }
     )
 );
@@ -71,8 +84,14 @@ const app = express();
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 
-// Middleware, CHANGE SECRET 
-app.use(session({ secret: "cats", resave: false, saveUninitialized: false }));
+// Middleware to check if the user is authenticated
+app.use(session({ 
+    secret: process.env.SESSION_SECRET, 
+    resave: false, 
+    saveUninitialized: false, 
+    cookie: { secure: false }  // Set to true in production with HTTPS
+}));
+
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('styles'));
@@ -97,3 +116,4 @@ app.use("/", indexRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Express app listening on http://localhost:${PORT}!`));
+

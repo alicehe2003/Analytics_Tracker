@@ -2,56 +2,30 @@ const express = require("express");
 const passport = require("passport");
 const { fetchInstagramAnalytics, fetchYouTubeAnalytics } = require("../services/analyticsService");
 const router = express.Router();
-
-const GoogleStrategy = require("passport-google-oauth20").Strategy; 
-
-// google oauth 
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: process.env.GOOGLE_CLIENT_ID, 
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET, 
-            callbackURL: "http://localhost:3000/auth/google/callback", 
-        }, 
-        (accessToken, refreshToken, profile, done) => {
-            // save access token and profile in session 
-            const user = {
-                googleId: profile.id, 
-                displayName: profile.displayName, 
-                accessToken: accessToken, 
-            }; 
-            return done(null, user); 
-        }
-    )
-); 
-
-// serialize and deserialize user 
-passport.serializeUser((user, done) => done(null, user)); 
-passport.deserializeUser((obj, done) => done(null, obj)); 
+const bcrypt = require('bcryptjs');  
+const pool = require("../db");
 
 // route to start google auth 
 router.get("/auth/google", passport.authenticate("google", {
     scope: ["profile", "https://www.googleapis.com/auth/youtube.readonly"],
-})); 
+}));
 
-// callback after google auth 
 router.get(
     "/auth/google/callback",
     passport.authenticate("google", {
         failureRedirect: "/",
     }),
     (req, res) => {
-        // successful authentication, redirect to analytics
         res.redirect("/analytics");
     }
 );
 
 // Middleware to check if the user is authenticated
 function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated() && req.user.accessToken) {
+    if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect("/auth/google");
+    res.redirect("/");
 }
 
 // Home route
