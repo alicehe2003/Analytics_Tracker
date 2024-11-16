@@ -79,8 +79,18 @@ router.post(
     })
 );
 
-// Route to render analytics page with form (GET request)
-router.get("/analytics", ensureAuthenticated, (req, res) => {
+// Middleware to ensure user is authenticated via Google OAuth
+function ensureGoogleAuthenticated(req, res, next) {
+    if (req.isAuthenticated() && req.user.accessToken) {
+        return next();
+    } else {
+        // If not authenticated, redirect to Google OAuth flow
+        res.redirect("/auth/google");
+    }
+}
+
+// Analytics route to render the analytics page with form (GET request)
+router.get("/analytics", ensureGoogleAuthenticated, (req, res) => {
     res.render("analytics", { 
         user: req.user, 
         analyticsData: [],
@@ -89,7 +99,7 @@ router.get("/analytics", ensureAuthenticated, (req, res) => {
 });
 
 // Route to fetch analytics for the specified video ID (POST request)
-router.post("/analytics", ensureAuthenticated, async (req, res, next) => {
+router.post("/analytics", ensureGoogleAuthenticated, async (req, res, next) => {
     const { videoId } = req.body;
     
     try {
